@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="ar">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #c2c7b8;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 20px;
+      }
+      .item-list {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+        gap: 150px;
+      }
+      .item {
+        text-align: center;
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      .item img {
+        width: 150px;
+        height: 200px;
+        display: block;
+        margin: 0 auto 10px;
+        border-radius: 10px;
+      }
+      .select {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 20px;
+        gap: 10px;
+      }
+      .select div {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .total-section {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+      }
+      button {
+        padding: 5px 10px;
+        margin: 0 5px;
+        cursor: pointer;
+      }
+      button.save {
+        background-color: rgb(62, 56, 244);
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+      button.add-to-cart {
+        background-color: #351ae3;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+      button.delete {
+        background-color: rgb(27, 27, 27);
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="item-list">
+      <div class="item" style="width: 200px">
+        <img
+          src="https://olhardigital.com.br/wp-content/uploads/2019/07/20190723124745-scaled.jpg"
+          alt="iPhone"
+        />
+        <p>iPhone <span style="margin-left: 1rem">900 JD</span></p>
+
+        <button
+          class="add-to-cart"
+          data-item="iphone"
+          data-price="900"
+          onclick="addToCart('iphone', 900)"
+        >
+          Add to Cart
+        </button>
+      </div>
+      <div class="item" style="width: 200px">
+        <img
+          src="https://2.bp.blogspot.com/-qfLxgft5Wbc/WQCNsBYt0XI/AAAAAAAAGQA/VKHDdhctokMhex5pBOGn6oLCDDbOjvcAgCLcB/s1600/FullSizeRender2.JPG"
+          alt="Headphones"
+        />
+        <p>Headset <span style="margin-left: 1rem">150 JD</span></p>
+
+        <button
+          class="add-to-cart"
+          data-item="headphones"
+          data-price="150"
+          onclick="addToCart('headphones', 150)"
+        >
+          Add to Cart
+        </button>
+      </div>
+      <div class="item" style="width: 200px">
+        <img
+          src="https://images.pexels.com/photos/163117/keyboard-white-computer-keyboard-desktop-163117.jpeg?cs=srgb&dl=table-technology-keyboard-163117.jpg&fm=jpg"
+          alt="Keyboard"
+        />
+        <p>Keyboard <span style="margin-left: 1rem">60 JD</span></p>
+
+        <button
+          class="add-to-cart"
+          data-item="keyboard"
+          data-price="60"
+          onclick="addToCart('keyboard', 60)"
+        >
+          Add to Cart
+        </button>
+      </div>
+    </div>
+
+    <div class="select" style="margin-top: 5rem">
+      <div data-item="iphone" style="display: none">
+        <img
+          src="https://olhardigital.com.br/wp-content/uploads/2019/07/20190723124745-scaled.jpg"
+          style="width: 100px"
+        />
+        <button onclick="quantity('iphone', -1)">-</button>
+        <input type="number" id="iphone-quantity" value="0" min="0" readonly />
+        <button onclick="quantity('iphone', 1)">+</button>
+        <button class="delete" onclick="removeItem('iphone')">Delete</button>
+      </div>
+      <div data-item="headphones" style="display: none">
+        <img
+          src="https://2.bp.blogspot.com/-qfLxgft5Wbc/WQCNsBYt0XI/AAAAAAAAGQA/VKHDdhctokMhex5pBOGn6oLCDDbOjvcAgCLcB/s1600/FullSizeRender2.JPG"
+          style="width: 100px"
+        />
+        <button onclick="quantity('headphones', -1)">-</button>
+        <input
+          type="number"
+          id="headphones-quantity"
+          value="0"
+          min="0"
+          readonly
+        />
+        <button onclick="quantity('headphones', 1)">+</button>
+        <button class="delete" onclick="removeItem('headphones')">
+          Delete
+        </button>
+      </div>
+      <div data-item="keyboard" style="display: none">
+        <img
+          src="https://images.pexels.com/photos/163117/keyboard-white-computer-keyboard-desktop-163117.jpeg?cs=srgb&dl=table-technology-keyboard-163117.jpg&fm=jpg"
+          style="width: 100px"
+        />
+        <button onclick="quantity('keyboard', -1)">-</button>
+        <input
+          type="number"
+          id="keyboard-quantity"
+          value="0"
+          min="0"
+          readonly
+        />
+        <button onclick="quantity('keyboard', 1)">+</button>
+        <button class="delete" onclick="removeItem('keyboard')">Delete</button>
+      </div>
+    </div>
+
+    <div class="total-section" style="width: 250px">
+      <p>TOTAL: <span id="total">0</span> JD</p>
+      <button class="save" onclick="saveList()">save</button>
+    </div>
+
+    <script>
+      let cart = {};
+      let addedItems = [];
+      let currentItem = "";
+
+      function addToCart(item, price) {
+        if (!addedItems.includes(item)) {
+          addedItems.push(item);
+          cart[item] = {
+            quantity: 1,
+            price: price,
+          };
+          currentItem = item;
+          updateSelect();
+          updateCart();
+        }
+      }
+
+      function updateSelect() {
+        let selectItems = document.querySelectorAll(".select div");
+        for (let item of selectItems) {
+          let itemName = item.getAttribute("data-item");
+          if (addedItems.includes(itemName)) {
+            item.style.display = "flex";
+          } else {
+            item.style.display = "none";
+          }
+        }
+      }
+
+      function quantity(item, amount) {
+        if (cart[item]) {
+          cart[item].quantity += amount;
+          if (cart[item].quantity < 0) {
+            cart[item].quantity = 0;
+          }
+          if (cart[item].quantity === 0) {
+            removeItem(item);
+          } else {
+            updateCart();
+          }
+        }
+        currentItem = item;
+        updateSelect();
+      }
+
+      function removeItem(item) {
+        const itemIndex = addedItems.indexOf(item);
+        if (itemIndex !== -1) {
+          addedItems.splice(itemIndex, 1);
+        }
+        delete cart[item];
+        updateCart();
+        updateSelect();
+      }
+
+      function calculateTotal() {
+        let total = 0;
+        for (let item in cart) {
+          total += cart[item].price * cart[item].quantity;
+        }
+        return total;
+      }
+
+      function updateCart() {
+        for (let item in cart) {
+          document.getElementById(`${item}-quantity`).value =
+            cart[item].quantity;
+        }
+        document.getElementById("total").textContent = calculateTotal();
+      }
+
+      function saveList() {
+        sessionStorage.setItem(
+          "total",
+          document.getElementById("total").textContent
+        );
+        alert("Cart saved successfully!");
+      }
+
+      function addToCart(item, price) {
+        if (!addedItems.includes(item)) {
+          addedItems.push(item);
+          cart[item] = {
+            quantity: 1,
+            price: price,
+          };
+          currentItem = item;
+          updateSelect();
+          updateCart();
+        }
+      }
+
+      function updateSelect() {
+        let selectItems = document.querySelectorAll(".select div");
+        for (let item of selectItems) {
+          let itemName = item.getAttribute("data-item");
+          if (addedItems.includes(itemName)) {
+            item.style.display = "flex";
+          } else {
+            item.style.display = "none";
+          }
+        }
+      }
+
+      function quantity(item, amount) {
+        if (cart[item]) {
+          cart[item].quantity += amount;
+          if (cart[item].quantity < 0) {
+            cart[item].quantity = 0;
+          }
+          if (cart[item].quantity === 0) {
+            removeItem(item);
+          } else {
+            updateCart();
+          }
+        }
+        currentItem = item;
+        updateSelect();
+      }
+
+      function removeItem(item) {
+        const itemIndex = addedItems.indexOf(item);
+        if (itemIndex !== -1) {
+          addedItems.splice(itemIndex, 1);
+        }
+        delete cart[item];
+        updateCart();
+        updateSelect();
+      }
+
+      function calculateTotal() {
+        let total = 0;
+        for (let item in cart) {
+          total += cart[item].price * cart[item].quantity;
+        }
+        return total;
+      }
+
+      function updateCart() {
+        for (let item in cart) {
+          document.getElementById(`${item}-quantity`).value =
+            cart[item].quantity;
+        }
+        document.getElementById("total").textContent = calculateTotal();
+      }
+
+      function saveList() {
+        sessionStorage.setItem(
+          "total",
+          document.getElementById("total").textContent
+        );
+      }
+
+      window.onload = function () {
+        let savedTotal = sessionStorage.getItem("total");
+        if (savedTotal) {
+          document.getElementById("total").textContent = savedTotal;
+        }
+      };
+    </script>
+  </body>
+</html>
